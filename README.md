@@ -11,7 +11,7 @@ In the Fall 2023 edition, the original objective remains untouched. In this 3-mo
 
 $\textbf{Motivations:}$
 What motivated the origin of this course was the idea of speeding up the R-learning process and having the basic elements to perform applied statistical analyses and create publishable plots to communicate results.
-There are several softwares to conduct statistical analyses and produce figures to communicate them. So, why did we choose R?  R is a free software environment for statistical computing and graphics with a big community using it. Therefore, R has two main advantages: i) it is $\textbf{free}$ and ii) it has a tremendous amount of documentation supporting the information needed to perform different tasks.  
+There are several software to conduct statistical analyses and produce figures to communicate them. So, why did we choose R?  R is a free software environment for statistical computing and graphics with a big community using it. Therefore, R has two main advantages: i) it is $\textbf{free}$ and ii) it has a tremendous amount of documentation supporting the information needed to perform different tasks.  
 
 $\textbf{Expectations:}$
 At the end of this course, we expect that people taking the course can apply the basics of data analysis workflow to their own data, projects, work, etc. 
@@ -29,8 +29,8 @@ At the end of this course, we expect that people taking the course can apply the
 | 7   | 10/19/2023 | Iteration: map functions, for loops. Functions |
 | 8   | 10/26/2023 | Mixed Models I  |
 | 9   | 11/02/2023 | Mixed Models II  |
-| 10  | 11/09/2023 |  _ |
-| 11  | 11/16/2023 |  Wrap-up |
+| 10  | 11/09/2023 |  Wrap-up |
+| 11  | 11/16/2023 |  Working on Project |
 | 12  | 11/23/2023 |  Working on Project |
 | 13  | 11/30/2023 |  Working on Project |
 | 14  | 12/07/2023 |  Project Presentation |
