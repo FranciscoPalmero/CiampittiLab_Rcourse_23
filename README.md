@@ -4,7 +4,7 @@ Francisco Palmero and Josefine Lacasa welcome Ciampitti Lab members to the R Cou
 # A Little of History about This Course
 This course was created in 2021 by $\textbf{Josefina Lacasa}$ as a setting to learn basic concepts of R programming and applied statistics. The idea behind this course was to provide Ciampitti Lab members with elemental skills in programming and applied statistics to help them succeed in industry or grad schools.
 
-Josefina dictated the course in Fall 2021 and 2022 editions. In the Fall 2023, Josefina will be present to co-lead the course, dictate some classes, and help on solving potential pitfalls. During the Fall 2023 edition, We will use a significant portion of the material that was originally developed by Josefina.
+Josefina dictated the course in Fall 2021 and 2022 editions. In the Fall 2023, Josefina will be present to co-lead the course, dictate some classes, and help on solving potential pitfalls. During the Fall 2023 edition, we will use a significant portion of the material that was originally developed by Josefina.
 
 # Fall 2023 Edition: Objective
 In the Fall 2023 edition, the original objective remains untouched. In this 3-month course, the goal is to provide trainees with the basic concepts of R programming and applied statistics.
