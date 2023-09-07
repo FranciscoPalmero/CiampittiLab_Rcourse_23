@@ -8,36 +8,35 @@ editor: visual
 Where to work in R Studio? .R, .qmd, .Rmd files
 
 - 1.a) Create sequence of numbers
-the colon operator (:) returns every interger between two intergers.
+the colon operator (:) returns every integer between two integers.
 ```{r}
 # One line of results
-1:5
+
 # More than one line of results
-100:150
+
+
 ```
 
 
 - 1.b) Incomplete commands: use chunks and console to analyze errors
 ```{r}
-5 - 
-# See in the console (complete the command)
+
+
 ```
 
 
 - 1.c) Errors in R
 ```{r}
 # I want to multiply
-3 x 5
+
 # Try a different command to do what you want
-3*5
+
 ```
 
 
 - 1.d) R as calculator
 ```{r}
-1+1
-3*2
-(4*3)/2
+
 ```
 
 
@@ -51,23 +50,22 @@ the colon operator (:) returns every interger between two intergers.
 + Bonus Extra: What does the semicolon (;) do in R?
 ```{r}
 # Run one command by line
-5+3
-2+5
+
+
 # Run more than one command in a line
-5+3; 2+5
+
 ```
 
 
 # 3) Types of data in R
 ```{r}
 # Integers: positive and negative whole numbers (including zero)
-typeof(1:3)
+
 # Double or Numeric: any real number
-typeof(0.01:0.1)
+
 # Character: text
-typeof("Hello")
+
 # Logical: TRUE's and FALSE's
-typeof(7>9)
 
 ```
 
@@ -79,27 +77,29 @@ What is an object in R? An object is just a name you can choose to call up store
 
 - 2.a) Creating objects
 ```{r}
-10:20
+
 # Save the sequence in your computer's memory (operators: "<-" or "=")
-sq <- 10:20
+
 # Call the saved data
-sq
 
 # Can I operate using objects?
+
+
 ```
 
 
 - 2.b) R is case-sensitive: silly source of errors
 ```{r}
 # Create an object with character data
-a_greet <- c("Hello", "Olá", "Hola")
+greet <- c("Hello", "Olá", "Hola")
 
-A_greet
+Greet
 ```
 
 
 - 2.c) R overwrites the information stored in an object
 ```{r}
+
 
 ```
 
@@ -130,7 +130,7 @@ R packages extend the capabilities of base R.
 # 6) Tidyverse: a collection of packages
 - 6.a) Calling Packages
 ```{r}
-easypackages::packages("tidyverse")
+
 ```
 
 
@@ -140,7 +140,8 @@ easypackages::packages("tidyverse")
 # Untidy data
 
 
-# Tady data
+# Tidy data (store it in an object)
+
 
 ```
 
@@ -152,15 +153,14 @@ Two different pipes:
   ii) tidyverse pipe "%>%"
 ```{r}
 # Take a look at your data frame
-df
+
 
 # Get the main information of your data frame in another way
-dplyr::glimpse(df)
+
 
 # Use pipes
 
-df %>% 
-  dplyr::glimpse()
+
 ```
 
 
@@ -183,19 +183,21 @@ df %>%
 
 # Helper functions
 
+
 ```
 
 
 "filter" function: select rows that satisfy a logic test
 -  Helper function
       - between()
-
 ```{r}
-# Select the doy in which 2 <= rain <= was between 2 and 10 mm
+# Select the doy in which 2 mm <= rain <= 10 mm
 
 # Option 1: "between" function
 
+
 # Option 2: logical operations
+
 
 ```
 
@@ -203,6 +205,7 @@ df %>%
 "arrange" function: orders the rows of a data frame
 ```{r}
 # Reorder the data frame rows according to the highest-to-low precipitation order
+
 
 ```
 
@@ -216,14 +219,15 @@ df %>%
 
 "rename" function: change the name of a variable (column)
 ```{r}
-# Change the name of AirTemp_max and AirTemp_min so that the new names were temp_min and temp_max, respectively.
+# Change the name of AirTemp_max and AirTemp_min so that the new names were temp_max and temp_min, respectively.
+
 
 ```
 
 
 "across" function: select the columns to which you want to apply a function 
 ```{r}
-# Coerce the year variable from type numeric (double) to type caracter 
+# Coerce the year variable from type numeric (double) to type character 
 
 ```
 
@@ -231,7 +235,7 @@ df %>%
 
 Using the functions: making the most of the pipes
 ```{r}
-# Calculate the mean air temperature between the day 10 and day 100 of the year. Then, within this interval, find the day of the year with the highest mean temperature. Code so that you show only the days of the year and their corresponding average temperature.
+# Calculate the mean air temperature between the day 10 and day 90 of the year. Then, within this interval, find the day of the year with the highest mean temperature. Code so that you show only the days of the year and their corresponding average temperature.
 
   
 ```
@@ -249,6 +253,13 @@ Using the functions: making the most of the pipes
 -   Avoid long lines (start a new line after comma).
 
 
-# 8) Class project
-Find a student/visiting scholar to work with!
+# 8) Go to the link below for some excersices using R
+file:///C:/Users/Francisco%20Palmero/OneDrive%20-%20Kansas%20State%20University/Documents/DOCUMENTS/K-STATE/R_Workshop/Excercises_23/Excercises_Day1.html
+
+# 9) Class project
+Find a student/visiting scholar to work with.
 Get data and think about ideas.
+
+
+
+
