@@ -1,0 +1,291 @@
+# 1) R Studio Interface.
+Where to work in R Studio? .R, .qmd, .Rmd files
+
+-   1.a) Create sequence of numbers the colon operator (:) returns every integer between two integers.
+```{r}
+# One line of results
+1:5
+
+# More than one line of results
+1:100
+```
+
+
+-   1.b) Incomplete commands: use chunks and console to analyze errors
+```{r}
+5 - 
+
+```
+
+-   1.c) Errors in R
+```{r}
+# I want to multiply
+5 x 5
+4 plus 4
+# Try a different command to do what you want
+5*5
+4+4
+```
+
+
+-   1.d) R as calculator
+```{r}
+5*7
+4+4
+(5+5)/2
+```
+
+
+-   1.e) Boolean operators (logical results) '\>', '\<', '\>=', '\<=', '==', '!=', '&', '\|'
+```{r}
+5 > 6
+5 < 6
+
+10 >= 11
+
+10 != 10
+
+```
+
+
+-   Bonus Extra: What does the semicolon (;) do in R?
+```{r}
+# Run one command by line
+5 * 5
+4 * 7
+# Run more than one command in a line
+5 * 5; 4 * 7
+```
+
+
+# 3) Types of data in R
+```{r}
+# Integers: positive and negative whole numbers (including zero)
+typeof(-5:5)
+# Double or Numeric: any real number
+typeof(.5:1)
+# Character: text
+typeof("Hello")
+# Logical: TRUE's and FALSE's
+typeof(5>4)
+```
+
+
+# 3) Objects
+Objects allows you to save data into your computer's memory. What is an object in R? An object is just a name you can choose to call up stored data.
+
+-   2.a) Creating objects
+```{r}
+(10:20)
+# Save the sequence in your computer's memory (operators: "<-" or "=")
+sq <- (10:20) 
+
+# Call the saved data
+sq
+
+# Can I operate using objects?
+sq/2
+sq_2 <- (0:10)
+
+sq; sq_2
+sq * sq_2
+```
+
+
+-   2.b) R is case-sensitive: silly source of errors
+```{r}
+# Create an object with character data
+greet <- c("Hello", "Olá", "Hola")
+
+Greet
+
+```
+
+
+-   2.c) R overwrites the information stored in an object
+```{r}
+greet
+greet <- "Hello"
+greet
+
+ls()
+
+```
+
+# 4) Functions
+
+A function is just an R object that performs statements in a predefined order. Main stricture of a function: -> function_name(argument1 = value1, argument2 = value2, ...) <-
+-   4.a) Create and roll a dice
+```{r}
+die <- 1:6
+
+set.seed(5)
+sample(x = die, size = 2, replace = TRUE)
+
+```
+
+
+# 5) Packages
+Packages are a collection of functions, documentation, and data sets. R packages extend the capabilities of base R.
+
+5.a) Installing the packages: readxl, tidyverse (easypackages)
+```{r}
+install.packages("tidyverse", dependencies = TRUE)
+install.packages("readxl", dependencies = TRUE)
+install.packages("easypackages")
+```
+
+# 6) Tidyverse: a collection of packages
+
+-   6.a) Calling Packages
+```{r}
+library(tidyverse)
+require(readxl)
+easypackages::packages("tidyverse",
+                       "readxl")
+
+```
+
+
+-   6.b) Reading the data
+```{r}
+# Untidy data
+read_excel("../CiampittiLab_Rcourse_23/Data/weather_untidy.xlsx")
+
+# Tidy data (store it in an object)
+df <- read.csv("../CiampittiLab_Rcourse_23/Data/weather_tidy.csv")
+
+df
+```
+
+
+6.c) Pipes
+Two different pipes: i) R pipe "|>" ii) tidyverse pipe "%>%"
+```{r}
+# Take a look at your data frame
+df
+
+# Get the main information of your data frame in another way
+glimpse(df)
+
+# Use pipes
+df %>% 
+  glimpse()
+
+```
+
+
+-   6.d) Some useful tidyverse functions
+"select" function: grab just some columns from your data frame 
+ Helper functions: 
+         - starts_with() 
+         - ends_with() 
+         - contains(): Contains a literal string. 
+         - matches(): Matches a regular expression (repeated characters). 
+         - num_range()
+```{r}
+# Select location, year, and date variable
+df %>% 
+  select(location, year, date)
+
+# Alternatives to do the same
+df %>% 
+  select(1:3)
+
+df %>% 
+  select(location:date)
+
+# Helper functions
+df %>% 
+  select(contains("AirTemp"))
+
+```
+
+
+"filter" function: select rows that satisfy a logic test - Helper function - between()
+```{r}
+# Select the doy in which 2 mm <= rain <= 10 mm
+
+# Option 1: "between" function
+df %>% 
+  filter(between(precip_mm, 2, 10))
+
+# Option 2: logical operations
+df %>% 
+  filter(precip_mm >= 2 & precip_mm <= 10)
+
+```
+
+
+"arrange" function: orders the rows of a data frame
+```{r}
+# Reorder the data frame rows according to the highest-to-low precipitation
+
+df %>% 
+  arrange(desc(precip_mm))
+
+df %>% 
+  arrange(precip_mm)
+
+```
+
+
+"mutate" function: create new columns
+```{r}
+# Calculate mean air temperature
+df %>% 
+  mutate(AirTemp_mean = (AirTemp_max+AirTemp_min)/2,
+         .after = AirTemp_min)
+```
+
+
+"rename" function: change the name of a variable (column)
+```{r}
+# Change the name of AirTemp_max and AirTemp_min so that the new names were temp_max and temp_min, respectively.
+df %>% 
+  rename(temp_max = AirTemp_max, 
+         temp_min = AirTemp_min)
+
+```
+
+
+"across" function: select the columns to which you want to apply a function
+```{r}
+# Coerce the year variable from type numeric (double) to type character 
+df %>% 
+  mutate(across(c(year,doy, AirTemp_max), 
+                as.character))
+```
+
+
+Using the functions: making the most of the pipes
+```{r}
+# Calculate the mean air temperature between the day 10 and day 90 of the year. Then, within this interval, find the day of the year with the highest mean temperature. Code so that you show only the days of the year and their corresponding average temperature.
+
+df %>%  
+  filter(between(doy, 10,90)) %>%
+  mutate(AirTemp_mean = (AirTemp_max+AirTemp_min)/2,
+         .after = AirTemp_min) %>% 
+  arrange(desc(AirTemp_mean)) %>% 
+  select(doy, AirTemp_mean)
+
+```
+
+
+# 7) Good coding habits
+-   Put all library() calls at the top of the script.
+-   Organize your files into 'data', 'notebook'/'markdown', 'output'.
+-   Comment your code.
+-   Object names:
+    -   Don't start with numbers
+    -   Shortest understandable
+-   Each %\>% followed by a new line.
+-   Avoid long lines (start a new line after comma).
+
+
+# 8) Go to the link below for some excersices using R
+file:///C:/Users/Francisco%20Palmero/OneDrive%20-%20Kansas%20State%20University/Documents/DOCUMENTS/K-STATE/R_Workshop/Excercises_23/Excercises_Day1.html
+
+
+# 9) Class project
+Find a student/visiting scholar to work with. Get data and think about ideas.
