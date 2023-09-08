@@ -21,17 +21,17 @@ At the end of this course, we expect that people taking the course can apply the
 |Week | Date | Topic |
 | --- | ---- | ----- |
 | 1   | 09/07/2023 | Intro to R, Types of Data, Tidyverse |
-| 2   | 09/14/2023 | Tidyverse, ggplot |
-| 3   | 09/21/2023 | Tidy Data, Review, Workflow Intro  |
-| 4   | 09/28/2023 | Linear models I  |
-| 5   | 10/05/2023 | Linear model II  |
-| 6   | 10/12/2023 | Geospatial topics |
-| 7   | 10/19/2023 | Iteration: map functions, for loops. Functions |
-| 8   | 10/26/2023 | Mixed Models I  |
-| 9   | 11/02/2023 | Mixed Models II  |
-| 10  | 11/09/2023 |  Wrap-up |
-| 11  | 11/16/2023 |  Working on Project |
-| 12  | 11/23/2023 |  Working on Project |
-| 13  | 11/30/2023 |  Working on Project |
-| 14  | 12/07/2023 |  Project Presentation |
+| 2   | 09/12/2023 | Tidyverse, ggplot |
+| 3   | 09/19/2023 | Tidy Data, Review, Workflow Intro  |
+| 4   | 09/26/2023 | Linear models I  |
+| 5   | 10/03/2023 | Linear model II  |
+| 6   | 10/10/2023 | Geospatial topics |
+| 7   | 10/17/2023 | Iteration: map functions, for loops. Functions |
+| 8   | 10/24/2023 | Mixed Models I  |
+| 9   | 10/31/2023 | Mixed Models II  |
+| 10  | 11/07/2023 |  Wrap-up |
+| 11  | 11/14/2023 |  Working on Project |
+| 12  | 11/21/2023 |  Working on Project |
+| 13  | 11/28/2023 |  Working on Project |
+| 14  | 12/05/2023 |  Project Presentation |
 
