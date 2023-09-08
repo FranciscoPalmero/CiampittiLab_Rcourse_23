@@ -1,0 +1,265 @@
+---
+title: "Week 1: Intro to R - Tidyverse"
+format: html
+editor: visual
+---
+
+# 1) R Studio Interface. 
+Where to work in R Studio? .R, .qmd, .Rmd files
+
+- 1.a) Create sequence of numbers
+the colon operator (:) returns every integer between two integers.
+```{r}
+# One line of results
+
+# More than one line of results
+
+
+```
+
+
+- 1.b) Incomplete commands: use chunks and console to analyze errors
+```{r}
+
+
+```
+
+
+- 1.c) Errors in R
+```{r}
+# I want to multiply
+
+# Try a different command to do what you want
+
+```
+
+
+- 1.d) R as calculator
+```{r}
+
+```
+
+
+- 1.e) Boolean operators (logical results)
+'>', '<', '>=', '<=', '==', '!=', '&', '|'
+```{r}
+
+```
+
+
++ Bonus Extra: What does the semicolon (;) do in R?
+```{r}
+# Run one command by line
+
+
+# Run more than one command in a line
+
+```
+
+
+# 3) Types of data in R
+```{r}
+# Integers: positive and negative whole numbers (including zero)
+
+# Double or Numeric: any real number
+
+# Character: text
+
+# Logical: TRUE's and FALSE's
+
+```
+
+
+
+# 3) Objects
+Objects allows you to save data into your computer's memory.
+What is an object in R? An object is just a name you can choose to call up stored data.
+
+- 2.a) Creating objects
+```{r}
+
+# Save the sequence in your computer's memory (operators: "<-" or "=")
+
+# Call the saved data
+
+# Can I operate using objects?
+
+
+```
+
+
+- 2.b) R is case-sensitive: silly source of errors
+```{r}
+# Create an object with character data
+greet <- c("Hello", "Olá", "Hola")
+
+Greet
+```
+
+
+- 2.c) R overwrites the information stored in an object
+```{r}
+
+
+```
+
+
+
+# 4) Functions
+A function is just an R object that performs statements in a predefined order.
+Main stricture of a function:
+     -> function_name(argument1 = value1, argument2 = value2, ...) <-
+
+- 4.a) Create and roll a dice
+```{r}
+
+```
+
+
+# 5) Packages
+Packages are a collection of functions, documentation, and data sets.
+R packages extend the capabilities of base R.
+
+5.a) Installing the packages: readxl, tidyverse (easypackages)
+```{r}
+
+```
+
+
+
+# 6) Tidyverse: a collection of packages
+- 6.a) Calling Packages
+```{r}
+
+```
+
+
+
+- 6.b) Reading the data
+```{r}
+# Untidy data
+
+
+# Tidy data (store it in an object)
+
+
+```
+
+
+6.c) Pipes
+
+Two different pipes: 
+  i) R pipe "|>"
+  ii) tidyverse pipe "%>%"
+```{r}
+# Take a look at your data frame
+
+
+# Get the main information of your data frame in another way
+
+
+# Use pipes
+
+
+```
+
+
+- 6.d) Some useful tidyverse functions
+
+"select" function: grab just some columns from your data frame
+-   Helper functions:
+        - starts_with()
+        - ends_with()
+        - contains(): Contains a literal string.
+        - matches(): Matches a regular expression (repeated characters).
+        - num_range()
+        
+```{r}
+# Select location, year, and date variable
+
+
+# Alternatives to do the same
+
+
+# Helper functions
+
+
+```
+
+
+"filter" function: select rows that satisfy a logic test
+-  Helper function
+      - between()
+```{r}
+# Select the doy in which 2 mm <= rain <= 10 mm
+
+# Option 1: "between" function
+
+
+# Option 2: logical operations
+
+
+```
+
+
+"arrange" function: orders the rows of a data frame
+```{r}
+# Reorder the data frame rows according to the highest-to-low precipitation order
+
+
+```
+
+
+"mutate" function: create new columns
+```{r}
+# Calculate mean air temperature
+
+```
+
+
+"rename" function: change the name of a variable (column)
+```{r}
+# Change the name of AirTemp_max and AirTemp_min so that the new names were temp_max and temp_min, respectively.
+
+
+```
+
+
+"across" function: select the columns to which you want to apply a function 
+```{r}
+# Coerce the year variable from type numeric (double) to type character 
+
+```
+
+
+
+Using the functions: making the most of the pipes
+```{r}
+# Calculate the mean air temperature between the day 10 and day 90 of the year. Then, within this interval, find the day of the year with the highest mean temperature. Code so that you show only the days of the year and their corresponding average temperature.
+
+  
+```
+
+
+# 7) Good coding habits
+
+-   Put all library() calls at the top of the script.
+-   Organize your files into 'data', 'notebook'/'markdown', 'output'.
+-   Comment your code.
+-   Object names:
+    -   Don't start with numbers
+    -   Shortest understandable
+-   Each %>% followed by a new line.
+-   Avoid long lines (start a new line after comma).
+
+
+# 8) Go to the link below for some excersices using R
+file:///C:/Users/Francisco%20Palmero/OneDrive%20-%20Kansas%20State%20University/Documents/DOCUMENTS/K-STATE/R_Workshop/Excercises_23/Excercises_Day1.html
+
+# 9) Class project
+Find a student/visiting scholar to work with.
+Get data and think about ideas.
+
+
+
+
