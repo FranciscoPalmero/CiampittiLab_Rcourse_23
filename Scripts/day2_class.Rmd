@@ -1,0 +1,313 @@
+
+# Call the packages
+```{r message=FALSE, warning=FALSE}
+
+easypackages::package("tidyverse",
+                      "writexl")
+
+```
+
+# 1) More about tidyverse
+```{r}
+# Read the weather_tidy database
+df <- read.csv("../CiampittiLab_Rcourse_23/Data/weather_tidy.csv")
+
+df
+
+# For reading excel files use readxl::read_excel() and place the path inside the read_excel function between quotes.
+
+```
+
+unite(): paste together multiple columns into one
+```{r}
+# Create a new column in which you have location and year 
+df %>% 
+  unite(col = "loc_year", c(location, year),
+        sep = "_", remove = TRUE)
+
+```
+
+
+separate(): turn a single column into multiple columns.
+```{r}
+# Create two columns, one containing the days of the month and the other containing the months.
+# Save the result in a new dataframe called df_2.
+
+df_2 <- df %>% 
+  separate(., col = date, 
+           into = c("day", "month"), 
+           sep = "-", remove = TRUE)
+
+df_2
+```
+
+distinct(): select only unique/distinct rows from a data frame
+```{r}
+# Find the months you have in weather dataset
+df_2 %>% 
+  distinct(., month)
+```
+
+
+case_when(): 
+```{r}
+# Create a column in which you assign the sequence 1st, 2nd, 3rd, ..., 12th for each of the month. 
+# Place that column next to month column.  
+
+######
+                                # month == "Apr" ~ "4th",
+                                # month == "May" ~ "5th",
+                                # month == "Jun" ~ "6th",
+                                # month == "Jul" ~ "7th",
+                                # month == "Aug" ~ "8th",
+                                # month == "Sep" ~ "9th",
+                                # month == "Oct" ~ "10th",
+                                # month == "Nov" ~ "11th",
+                                # month == "Dec" ~ "12th",
+#####
+
+df_2 %>% 
+  mutate(month_num = case_when(month == "Jan" ~ "1st",
+                               month == "Feb" ~ "2nd",
+                               month == "Mar" ~ "3rd",
+                               month == "Apr" ~ "4th",
+                               month == "May" ~ "5th",
+                               month == "Jun" ~ "6th",
+                               month == "Jul" ~ "7th",
+                               month == "Aug" ~ "8th",
+                               month == "Sep" ~ "9th",
+                               month == "Oct" ~ "10th",
+                               month == "Nov" ~ "11th",
+                               month == "Dec" ~ "12th"),
+         .after = month
+         )
+
+# Now, suppouse you want to change the name of the month just for the first 3 months and then you would like to keep the original name
+
+df_2 %>% 
+  mutate(month_num = case_when(month == "Jan" ~ "1st",
+                               month == "Feb" ~ "2nd",
+                               month == "Mar" ~ "3rd",
+                               TRUE ~ month),
+         .after = month
+         )
+
+
+df_3 <- df_2 %>% 
+  mutate(month_num = case_when(month == "Jan" ~ "jan",
+                               TRUE ~ month),
+         .after = month
+         )
+
+# Use base R to change the values of cells
+df_3[1,5] <- "jAn"
+df_3[2,5] <- "jaN"
+
+# Solve the problem using %in%
+df_3 %>% 
+  mutate(month_num = case_when(month_num %in% c("jan", "jAn", "jaN") ~ "Jan",
+                               TRUE ~ month_num)
+         )
+
+```
+
+
+
+str_replace(): replace the first match
+str_replace_all(): replace all matches
+```{r}
+# Another use of case_when function. 
+# Let's create a non desired pattern. Let the error be an underscore in Jan, between letters a and n. That is, error = "Ja_n". Solve the error so that you have the true name back  
+
+df_2 %>% 
+  mutate(month = case_when(month == "Jan" ~ "Ja_n",
+                           TRUE ~ month)
+         ) %>% 
+  mutate(across(month, 
+                .fn = str_replace_all,
+                pattern = "_",
+                replacement = ""
+                )
+         )
+
+# Another way of running across function
+df_2 %>% 
+  mutate(month = case_when(month == "Jan" ~ "Ja_n",
+                           TRUE ~ month)
+         ) %>% 
+  mutate(across(month,
+                ~ str_replace_all(., pattern = "_",
+                                  replacement = "")
+                )
+         )
+```
+
+
+round(): it rounds the values in its first argument to the specified number of decimal places
+```{r}
+# Round the accumlated precipitation so that it has 1 decimal
+df_2 %>% 
+  mutate(accum_precip_mm = round(accum_precip_mm, 
+                                 digits = 1))
+
+# Round the accumlated precipitation so that it has no decimals
+
+
+```
+
+
+
+group_by(): it takes an existing tibble and converts it into a grouped tibble where operations are performed "by group"
+summarise(): it creates a new data frame. It will have one (or more) rows for each combination of grouping variables
+```{r}
+# 1) Calculate the mean air temperature
+df_2 %>% 
+  mutate(AirTemp_mean = (AirTemp_max + AirTemp_min)*1/2,
+         .after = AirTemp_min
+         )
+# 2) Calculate the average and the standard deviation of the mean air temperature by month.
+
+df_2 %>% 
+  mutate(AirTemp_mean = (AirTemp_max + AirTemp_min)*1/2,
+         .after = AirTemp_min
+         ) %>% 
+  group_by(month) %>% 
+  summarise(mean_air_temp = mean(AirTemp_mean),
+            sd_mean_air_temp = sd(AirTemp_mean))
+
+# 3) Which is the month with higher variability in the mean temprature?
+
+df_2 %>% 
+  mutate(AirTemp_mean = (AirTemp_max + AirTemp_min)*1/2,
+         .after = AirTemp_min
+         ) %>% 
+  group_by(month) %>% 
+  summarise(mean_air_temp = mean(AirTemp_mean),
+            sd_mean_air_temp = sd(AirTemp_mean)) %>% 
+  arrange(desc(sd_mean_air_temp)) 
+  
+```
+
+
+The mutating joins add columns from y to x, matching rows based on the keys:
+    - inner_join(): includes all rows in x and y.
+    - left_join(): includes all rows in x. 
+    - right_join(): includes all rows in y. 
+    - full_join(): includes all rows in x or y.
+```{r}
+# An already preapred example
+iris
+
+new_df <- data.frame(Species = c("setosa", 
+                       "versicolor", 
+                       "virginica"),
+           Class = c("A", "B", "C"))
+
+iris
+new_df
+
+iris %>% 
+  left_join(., 
+            new_df,
+            by = "Species"
+            )
+```
+
+
+pivot_longer(): increasing the number of rows and decreasing the number of columns
+pivot_wider():  increasing the number of columns and decreasing the number of rows
+```{r}
+# Select the the day of the month, month, max temperature, and min temperature. Then, pivot the data so that you get one column with the type of temperatures and other column with their respective degrees.
+colnames(df_2)
+
+df_2 %>%
+  dplyr::select(day, month, AirTemp_max, AirTemp_min) 
+
+df_2 %>%
+  dplyr::select(day, month, AirTemp_max, AirTemp_min) %>% 
+  pivot_longer(., col = c(AirTemp_max, AirTemp_min),
+              names_to = "Temp_type", values_to = "Temp_C"
+               )
+
+```
+
+
+
+# 2) ggplot
+This a simulated database recreating a typical corn yield response to plant density.
+```{r}
+
+```
+
+
+Implementing different functions to create new variable
+```{r}
+# Create a new column for plant density by categorizing the density into low, medium, and high according to the .33 and .66 quantiles. 
+# Save the new data frame with the new column by overwriting the previous object.
+
+```
+
+
+# 2.1)Stepts to create a plot using ggplot2 package
+# 2.1.1) ggplot(): start a ggplot object 
+```{r}
+# Create an empty canvas
+
+```
+
+# 2.1.2) Add layers
+- The layers in ggplot2 are in the form of 'geom_...()' and 'stat_...()'
+- The visual properties of the plot are specified inside the function aes(). The aes() function can be written inside the ggplot() function (apply to all geoms and stats) or inside the geoms or stats (apply to that particular geom or stat).
+
+
+```{r}
+# Create am scatter plot showing corn yield vs plant density
+
+```
+
+
+# 2.1.3) Adjust your aesthetics
+```{r}
+# Create am scatter plot showing corn yield vs plant density and incorporate the plant density as a categorical variable.
+# Color
+
+# Shape (increase the size)
+
+# Color and shape
+
+```
+
+# 2.1.4) Manage the scales
+- 'scale_...()'
+- manage the scale of the axis
+- manage the scale to fill and colors
+```{r}
+# Adjust the limits of the limits of the axis
+
+
+# Change the colors (do not let ggplot chooses the colors for you)
+
+```
+
+
+# 2.1.5) Change the coordinates you show in your plot
+- coord_cartesian()
+```{r}
+
+```
+
+
+facets -> 'facet_': split your plot according to a categorical variable
+```{r}
+# Split the scatter plot according to the density categories
+
+```
+
+themes: change the aspect of your plot
+```{r}
+
+```
+
+
+
+
