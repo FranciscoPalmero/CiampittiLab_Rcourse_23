@@ -1,0 +1,30 @@
+---
+title: "Excercises_Day1"
+author: "Francisco Palmero"
+format: pdf
+---
+
+Read the exercises and think about the packages you will need to solve them. Then call those packages before begging to work with. If at the end you notice that there were packages you needed but you had not added, add them once you realize this. 
+
+
+# Excercise 1 - R as calculator
+a. Choose any number and add 2 to it.
+b. Multiply the result by 3.
+c. Subtract 6 from the answer.
+d. Divide what you get by 3. 
+
+Hint: you should end up with the same number you started with.
+
+
+# Excercise 2
+- Solve this exercise using the "SoybeanWorkshop" data.
+
+Change the name of the third column from "K rate (lbac)" to "K_rate_labc". After that, coerce the K_rate_labc variable to character. Finally, calculate the mean of S1.Kpct for K_rate_labc of 100.
+
+
+# Excercise 3
+- Solve this exercise using the "SoybeanWorkshop" data.
+
+Is the mean of O2_Kpct for TRT 2 greater than the mean of O2_Kpct for TRT 5? Answer this question finishing with a logical type of data.
+
+
