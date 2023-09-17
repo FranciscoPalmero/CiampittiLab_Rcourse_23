@@ -21,8 +21,8 @@ At the end of this course, we expect that people taking the course can apply the
 |Week | Date | Topic |
 | --- | ---- | ----- |
 | 1   | 09/07/2023 | Intro to R, Types of Data, Tidyverse |
-| 2   | 09/12/2023 | Tidyverse, ggplot |
-| 3   | 09/19/2023 | Tidy Data, Review, Workflow Intro  |
+| 2   | 09/12/2023 | Tidyverse |
+| 3   | 09/19/2023 | Tidy Data, Workflow Intro, ggplot2  |
 | 4   | 09/26/2023 | Linear models I  |
 | 5   | 10/03/2023 | Linear model II  |
 | 6   | 10/10/2023 | Geospatial topics |
