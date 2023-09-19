@@ -294,6 +294,10 @@ Implementing different functions to create new variable
 - coord_cartesian()
 ```{r}
 
+case_when
+
+
+%in% ()
 ```
 
 
@@ -309,5 +313,5 @@ themes: change the aspect of your plot
 ```
 
 
-
+$f^{-1}'(x) = \frac{1}{f'(f^{-1}(x))}$
 
