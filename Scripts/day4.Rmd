@@ -3,7 +3,6 @@
 ```{r message=FALSE, warning=FALSE}
 easypackages::libraries("tidyverse", "car", "agricolae")
 
-library(tidyverse)
 ```
 
 
@@ -403,9 +402,9 @@ mean(MC$Yield_SY)
 
 # Model representing that corn grain yield depends on the N rate
 
-lm(Yield_SY ~ N_rate+Block, data = MC)
-summary(lm(Yield_SY ~ N_rate+Block, data = MC))
-<- <- <- <- <- <- <- anova(lm(Yield_SY ~ N_rate+Block, data = MC))
+# lm(Yield_SY ~ N_rate+Block, data = MC)
+# summary(lm(Yield_SY ~ N_rate+Block, data = MC))
+# anova(lm(Yield_SY ~ N_rate+Block, data = MC))
 
 m2 <- aov(Yield_SY ~ N_rate+Block, data = MC)
 summary(m2)
