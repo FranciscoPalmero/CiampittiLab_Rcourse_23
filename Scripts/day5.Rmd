@@ -1,0 +1,336 @@
+
+# Packages
+```{r message=FALSE, warning=FALSE}
+
+# purrr; inside tidyverse
+# rsample; install it
+easypackages::libraries("tidyverse", "rsample")
+
+```
+
+
+# ----------------------------------------------
+# 1) For loops
+# 1.1) Basics
+Loops are R’s method for repeating a task
+
+for loops provide a way to tell R, “Do this for every value of that.” 
+
+```{r}
+for (value in that) {
+  
+  this
+  
+}
+
+```
+
+
+```{r}
+for(value in c("for", "loops", "are", "great")){
+  
+  print(value)
+  
+}
+
+# for loop = Las Vegas
+for(value in c("for", "loops", "are", "great")){
+  
+  value
+  
+}
+
+```
+
+
+
+# 1.2) Reading many files
+```{r}
+files <- list.files("../CiampittiLab_Rcourse_23/Data/Iterations/", 
+           pattern = "[20]",
+           full.names = TRUE)
+
+dfs <- list()
+
+for (i in files) {
+  
+  dfs[[i]] <- readxl::read_excel(i)
+  
+}
+
+dfs
+```
+
+
+# 1.3) Analysis: ANOVA
+# 1.3.1) Read the data
+```{r}
+df <- read.csv("../CiampittiLab_Rcourse_23/Data/N_initiative/N_rate_yield.csv") %>% 
+  mutate(across(everything(),
+                ~na_if(., ".")))
+```
+
+
+```{r}
+df %>% 
+  distinct(State)
+```
+
+
+# 1.3.2) Get one data frame for each state
+```{r}
+
+for (i in unique(df$State)) {
+  
+  # df_site[[i]] <- 
+  df %>% 
+    filter(State == i) %>% 
+    print()
+  
+}
+
+
+# Create a list were to assign each data frame
+df_site <- list()
+
+# Save each df in a list
+for (i in unique(df$State)) {
+  
+  df_site[[i]] <-  df %>% 
+    filter(State == i)
+  
+}
+
+
+df_site
+df_site[[1]]
+df_site[[2]]
+df_site[["NE"]]
+```
+
+
+Detect NA's in each state
+```{r}
+for (j in names(df_site)) {
+  
+  df_site[[j]] %>% 
+    summarise_all(funs(sum(is.na(.)))) %>% 
+    print()
+  
+}
+
+```
+
+
+# 1.3.3) Adjust the type of variable accordingly
+```{r}
+for (i in names(df_site)) {
+  
+ df_site[[i]] <- df_site[[i]] %>% 
+    mutate(across(Plant_N, ~as.factor(.))) %>% 
+    mutate(across(Yield_SY, ~as.numeric(.)))
+  
+}
+
+df_site
+```
+
+# 1.3.4) Run a anova for each site
+```{r}
+
+for (i in names(df_site)) {
+  
+  aov(Yield_SY ~ Plant_N+Block, df_site[[i]]) %>% 
+    summary(.) %>% 
+    print()
+    
+}
+
+```
+
+
+
+
+# ----------------------------------------------
+# 2) MAP functions
+# 2.1) Basics
+map() is similar toacross(), but instead of doing something to each column in a data frame, it does something to each element of a vector.map(x, f)
+
+```{r}
+# Define list of vectors
+df <- list(c(10, 20, 30),
+             c(100, 200, NA),
+             c(10, 15, 20))
+
+#calculate mean value of each vector in list
+df %>%
+  map(mean, na.rm=TRUE)
+```
+
+
+
+# 2.2) Reading many files
+```{r}
+files <- list.files("../CiampittiLab_Rcourse_23/Data/Iterations/", 
+           pattern = "[20]",
+           full.names = TRUE)
+
+# Apply yhe same function to each element in the list
+dfs <- purrr::map(files, readxl::read_excel)
+dfs
+
+# Bind all packages together 
+purrr::reduce(dfs, bind_rows)
+```
+
+
+
+
+
+
+
+# 2.3) Analysis: Bootstrapping
+# 2.3.1) Read the data
+```{r}
+dens <- readxl::read_excel("../CiampittiLab_Rcourse_23/Data/dens_yield.xlsx")
+```
+
+# 2.3.2) Generate bootstrap samples
+```{r}
+set.seed(79)
+dens_boot <- rsample::bootstraps(dens,
+           times = 100,
+           strata = NULL)
+
+dens_boot
+```
+
+# 2.3.3) Use map function to fit a quadratic regression
+```{r}
+dens_quad_boot <- dens_boot %>%
+  mutate(model = map(splits, 
+                     ~ lm(yield_t.ha ~ pl_m2 + I(pl_m2^2), data = .)),
+         coef_info = map(model, 
+                         generics::tidy)
+         )
+
+dens_quad_boot
+```
+
+# 2.3.4) Extract the coeficients of the regression
+```{r}
+dens_boot.coefs <- dens_quad_boot %>%
+  unnest(coef_info)
+
+dens_boot.coefs
+```
+
+# 2.3.5) Get the coeficients in familiar way
+```{r}
+parameters <- dens_boot.coefs %>% 
+  select(id, term, estimate, p.value) %>% 
+  pivot_wider(., id_cols = id,
+              names_from = term,
+              values_from = estimate:p.value,
+              names_sep = ".")
+
+colnames(parameters) <- c("id", "b0", "b1", "b2",
+                          "p.value_b0", "p.value_b1", "p.value_b2")
+```
+
+
+# 2.3.6) Get a summary of the parameters
+```{r}
+parameters %>% 
+  summary()
+
+```
+
+# 2.3.7) Plots
+```{r}
+parameters %>% 
+  ggplot() +
+  geom_density(aes(b0), 
+               size = 1)
+
+parameters %>% 
+  ggplot() +
+  geom_density(aes(b1), 
+               size = 1)  
+
+parameters %>% 
+  ggplot() +
+  geom_density(aes(b2), 
+               size = 1)
+
+```
+
+
+```{r}
+dens %>% 
+ ggplot() +
+  geom_point(aes(pl_m2, 
+                 yield_t.ha),
+             shape = 21, color = "black",
+             fill = "#117a65", size = 3,
+             alpha = 0.5
+             ) +
+  coord_cartesian(xlim = c(0,13), 
+                  ylim = c(7,12.5)) +
+  scale_x_continuous(expand = c(0,0)) +
+  labs(y = expression(Yield~(t~ha^-1)),
+       x = expression(Density~(plants~m^-2))) +
+  theme_bw() +
+  geom_line(aes(x = pl_m2, y = quantile(parameters$b0, probs = .5) + 
+                  quantile(parameters$b1, probs = .5)*pl_m2 + 
+                  quantile(parameters$b2, probs = .5)*((pl_m2)^2)
+                  ),
+            linewidth = 1, color = "blue"
+            )
+
+```
+
+
+
+# ----------------------------------------------
+# 3) Functions
+# A) Confidence Intervals
+# A.1) Using R functions
+```{r}
+quantile(parameters$b0, probs = c(0.025, 0.5, 0.975))
+quantile(parameters$b1, probs = c(0.025, 0.5, 0.975))
+quantile(parameters$b2, probs = c(0.025, 0.5, 0.975))
+
+```
+# A.2) Creating our own function
+Use Normal distribution properties
+```{r}
+
+mean(parameters$b0) + 1.96*sd(parameters$b0)
+
+conf_int <- function(x, na = TRUE){
+  
+  # Take the mean of the rv
+  avg = mean(x, na.rm = na)
+  
+  # Take the standard deviation of the rv
+  std <- sd(x, na.rm = na)
+  
+  # Calculate the confidence interval
+  ci_right <- avg + 1.96*std
+  ci_left <- avg - 1.96*std
+  ci <- c(ci_left, avg, ci_right)
+  
+  # print(ci)
+  
+}
+
+
+```
+
+```{r}
+conf_int(x = parameters$b0)
+```
+
+
+
