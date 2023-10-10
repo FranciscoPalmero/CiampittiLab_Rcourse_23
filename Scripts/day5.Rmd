@@ -65,9 +65,15 @@ dfs
 # 1.3) Analysis: ANOVA
 # 1.3.1) Read the data
 ```{r}
-df <- read.csv("../CiampittiLab_Rcourse_23/Data/N_initiative/N_rate_yield.csv") %>% 
-  mutate(across(everything(),
-                ~na_if(., ".")))
+df <- read.csv("../Data/N_initiative/N_rate_yield.csv") %>% 
+    mutate(across(where(is.numeric), as.character),
+         across(everything(),
+                ~na_if(., ".")),
+         across(.cols = c(Trial, Year, 
+                          Block, Plant_N),
+                ~as.factor(.)),
+         across(Yield_SY, as.numeric)
+         )
 ```
 
 
@@ -171,7 +177,7 @@ df %>%
 
 # 2.2) Reading many files
 ```{r}
-files <- list.files("../CiampittiLab_Rcourse_23/Data/Iterations/", 
+files <- list.files("../Data/Iterations/", 
            pattern = "[20]",
            full.names = TRUE)
 
@@ -192,7 +198,7 @@ purrr::reduce(dfs, bind_rows)
 # 2.3) Analysis: Bootstrapping
 # 2.3.1) Read the data
 ```{r}
-dens <- readxl::read_excel("../CiampittiLab_Rcourse_23/Data/dens_yield.xlsx")
+dens <- readxl::read_excel("../Data/dens_yield.xlsx")
 ```
 
 # 2.3.2) Generate bootstrap samples
@@ -211,7 +217,7 @@ dens_quad_boot <- dens_boot %>%
   mutate(model = map(splits, 
                      ~ lm(yield_t.ha ~ pl_m2 + I(pl_m2^2), data = .)),
          coef_info = map(model, 
-                         generics::tidy)
+                         broom::tidy)
          )
 
 dens_quad_boot
