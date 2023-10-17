@@ -1,0 +1,277 @@
+# Packages
+
+```{r}
+#remotes::install_github("hrbrmstr/albersusa")
+#install.packages("NbClust")
+#install.packages("factoextra")
+```
+
+
+```{r message=FALSE, warning=FALSE}
+library(albersusa)
+library(tidyverse)
+library(sf)
+library(NbClust)
+library(factoextra)
+```
+
+# ----------------------------------------------
+
+
+# 1) Spatial data types
+
+## 1.1) Vectorial data
+
+```{r}
+counties_usa <- counties_sf()
+counties_usa %>% 
+  data.frame()
+```
+
+
+```{r}
+ggplot() +
+  geom_sf(data = usa_states)
+```
+
+## 1.2) Raster data
+
+```{r}
+
+```
+
+# ----------------------------------------------
+
+# 2) 
+
+Example 1:
+
+
+```{r}
+kansas_counties <-  counties_usa %>% 
+  filter(state == 'Kansas')
+```
+
+```{r}
+ggplot() + 
+  geom_sf(data = kansas_counties)
+```
+
+
+```{r}
+ggplot() +
+    geom_sf(data = usa_states) +
+    geom_sf(data = kansas_counties, aes(fill=as.factor(name)),
+            show.legend = FALSE) +
+    scale_fill_viridis_d() +
+    coord_sf(crs = st_crs(4326), 
+             xlim = c(-104, -93), ylim = c(36, 41.5))
+```
+
+-   Load the mesonet weather stations locations files
+
+```{r}
+mesonet_sites <- read.csv('../data/spatial_data/KSMeso-Station-Metadata.csv',skip = 2)
+mesonet_sites
+```
+
+```{r}
+mesonet_sites <- mesonet_sites %>% 
+  st_as_sf(coords = c("Longitude","Latitude")) %>%
+  st_set_crs(st_crs("epsg:4326"))
+
+plot(mesonet_sites)
+```
+
+-   Use ggplot2 to plot and visualize the information. Add the name of axis X and Y, Title and subtitle
+
+```{r}
+ggplot() +
+    geom_sf(data = usa_states,color='#343a40',fill='gray',size=0.4) +
+    geom_sf(data = kansas_counties, aes(fill=as.factor(name)),
+            show.legend = FALSE,alpha=0.5,size=0.2,color='black') + 
+    geom_sf(data = mesonet_sites,size=1, color='darkgreen',
+            fill='black')+ 
+    scale_fill_viridis_d() +
+  xlab('Longitude') +
+  ylab('Latitude') +
+    coord_sf(crs = st_crs(4326), 
+             xlim = c(-104, -93), ylim = c(36, 41)) 
+```
+
+# ----------------------------------------------
+
+
+Example 2: 
+
+
+```{r}
+streams <- read_sf('../Data/spatial_data/kansas_streams_order3_9_webmerc.shp') %>%
+  select(GNIS_NAME)
+
+```
+
+```{r}
+high_plain_groundwater <- read_sf('../Data/spatial_data/hp_bound2010_wgs84.shp') %>%
+  st_set_crs(st_crs("epsg:4326"))
+
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = usa_states,) +
+  geom_sf(data = high_plain_groundwater, fill=NA, color='blue',show.legend = TRUE)  +
+    coord_sf(crs = st_crs(4326), 
+             xlim = c(-110, -90), ylim = c(30, 45)) 
+```
+
+```{r}
+streams <- read_sf('../Data/spatial_data/kansas_streams_order3_9_webmerc.shp') %>%
+  select(GNIS_NAME)
+```
+
+```{r}
+ggplot() + 
+  geom_sf(data = kansas_counties) +
+  geom_sf(data = streams)
+```
+
+```{r}
+field_irrigated <- read_delim('../Data/spatial_data/wwc5_wells.txt') %>%
+  select(LONGITUDE,LATITUDE,WELL_USE) %>%
+  filter(WELL_USE == 'Irrigation') %>%
+  na.exclude() %>%
+  st_as_sf(coords=c('LONGITUDE','LATITUDE'))  %>%
+  st_set_crs(st_crs("epsg:4326"))
+```
+
+
+```{r}
+
+boundary_kansas <- usa_sf() %>% 
+  filter(name=='Kansas')
+
+ggplot() + 
+  geom_sf(data = boundary_kansas) +
+  geom_sf(data = streams,color='blue') + 
+  geom_sf(data = irrigation, color='black', size=0.1)
+```
+
+
+```{r}
+
+high_plain_groundwater <- high_plain_groundwater  %>%
+  st_make_valid()
+
+boundary_kansas <- boundary_kansas %>% 
+  st_make_valid()
+
+high_plain_groundwater_ks <- high_plain_groundwater %>% 
+  st_intersection(boundary_kansas)
+
+ggplot() + 
+  geom_sf(data = boundary_kansas) + 
+  geom_sf(data = high_plain_groundwater_ks)
+
+
+#st_difference(high_plain_groundwater,boundary_kansas)
+```
+```{r}
+ggplot() + 
+  geom_sf(data = boundary_kansas) +
+  #geom_sf(data = streams,color='blue') + 
+  geom_sf(data = high_plain_groundwater_ks,fill=NA,color='orange',size=3,alpha=0.7) + 
+  geom_sf(data = irrigation, color='black', size=0.1,alpha=0.4)
+```
+
+# ----------------------------------------------
+
+Example 3: 
+
+Grid creation 
+
+```{r create grid}
+
+boundary_kansas_proj <- boundary_kansas %>%
+  st_set_crs(st_crs("epsg:4326")) %>%
+  st_transform(crs=3744) 
+
+grid <- st_make_grid(boundary_kansas_proj,
+                     cellsize = 20000,
+                     what = "centers") 
+
+ggplot() + 
+  geom_sf(data = boundary_kansas) + 
+  geom_sf(data = grid)
+```
+
+```{r}
+grid <- boundary_kansas_proj %>% 
+  st_intersection(grid) %>%
+  st_set_crs(st_crs("epsg:3744")) %>%
+  st_transform(crs=4326) 
+
+
+ggplot() + 
+  geom_sf(data = boundary_kansas) + 
+  geom_sf(data = grid)  
+```
+
+
+read terraclimate rasters
+
+```{r}
+precipitation <- raster::raster('../Data/spatial_data/pet.tif')
+eto <- raster::raster('../Data/spatial_data/aet.tif')
+temp_min <- raster::raster('../Data/spatial_data/tmmn.tif')
+temp_max <- raster::raster('../Data/spatial_data/tmmx.tif')
+
+
+df_climate_vars <- raster::stack(precipitation,eto,temp_max,temp_min) %>%
+  raster::extract(grid, fun='median') %>%
+  cbind(grid) %>%
+  
+
+```
+
+
+Raster extraction from raster and polygon
+
+
+```{r}
+future::plan(future::multicore(workers = availableCores(constraints = "multicore")))
+res <- NbClust(df_climate_vars[,1:4], 
+               diss = NULL, distance = 'euclidean', min.nc = 2, max.nc = 5, 
+               method = "kmeans", index = 'all')
+
+number_optimal <- fviz_nbclust(res, method = "silhouette", print.summary = TRUE) +
+  theme_minimal()
+
+```
+
+```{r}
+set.seed(123)
+km.res <- kmeans(df_climate_vars[,1:4], 6, nstart = 25)
+
+climate_clusters_ks <- cbind(df_climate_vars, as.factor(km.res$cluster))
+colnames(kmeans_3Z) <- c('X','Y','cluster')
+
+```
+
+
+```{r}
+ggplot() + 
+  geom
+```
+
+
+
+Resources
+
+https://www.sciencebase.gov/catalog/item/6314061bd34e36012efa397b
+
+
+
+
+
+
