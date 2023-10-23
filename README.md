@@ -28,7 +28,7 @@ At the end of this course, we expect that people taking the course can apply the
 | 6   | 10/10/2023 | Iteration: map functions, for loops. Functions |
 | 7   | 10/17/2023 | Geospatial topics |
 | 8   | 10/24/2023 | Mixed Models I  |
-| 9   | 10/31/2023 | Mixed Models II  |
+| 9   | 11/03/2023 | Mixed Models II  |
 | 10  | 11/07/2023 |  Wrap-up |
 | 11  | 11/14/2023 |  Working on Project |
 | 12  | 11/21/2023 |  Working on Project |
