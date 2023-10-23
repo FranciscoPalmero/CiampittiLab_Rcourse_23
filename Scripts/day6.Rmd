@@ -13,7 +13,19 @@ library(tidyverse)
 library(sf)
 library(NbClust)
 library(factoextra)
+library(magrittr)
 ```
+
+
+```{r}
+counties_sf <- read_sf('../Data/spatial_data/counties_sf.shp')
+```
+
+```{r}
+usa_states <- read_sf('../Data/spatial_data/usa_sf.shp')
+
+```
+
 
 # ----------------------------------------------
 
@@ -125,10 +137,6 @@ ggplot() +
              xlim = c(-110, -90), ylim = c(30, 45)) 
 ```
 
-```{r}
-streams <- read_sf('../Data/spatial_data/kansas_streams_order3_9_webmerc.shp') %>%
-  select(GNIS_NAME)
-```
 
 ```{r}
 ggplot() + 
@@ -137,7 +145,7 @@ ggplot() +
 ```
 
 ```{r}
-field_irrigated <- read_delim('../Data/spatial_data/wwc5_wells.txt') %>%
+field_irrigated <- read_csv('../Data/spatial_data/field_irrigated_ks.csv') %>%
   select(LONGITUDE,LATITUDE,WELL_USE) %>%
   filter(WELL_USE == 'Irrigation') %>%
   na.exclude() %>%
@@ -148,7 +156,7 @@ field_irrigated <- read_delim('../Data/spatial_data/wwc5_wells.txt') %>%
 
 ```{r}
 
-boundary_kansas <- usa_sf() %>% 
+boundary_kansas <- usa_states %>% 
   filter(name=='Kansas')
 
 ggplot() + 
@@ -197,8 +205,8 @@ boundary_kansas_proj <- boundary_kansas %>%
   st_transform(crs=3744) 
 
 grid <- st_make_grid(boundary_kansas_proj,
-                     cellsize = 20000,
-                     what = "centers") 
+                     cellsize = 10000,
+                     what = "polygons") 
 
 ggplot() + 
   geom_sf(data = boundary_kansas) + 
@@ -229,7 +237,7 @@ temp_max <- raster::raster('../Data/spatial_data/tmmx.tif')
 
 df_climate_vars <- raster::stack(precipitation,eto,temp_max,temp_min) %>%
   raster::extract(grid, fun='median') %>%
-  cbind(grid) %>%
+  cbind(grid)
   
 
 ```
@@ -240,28 +248,33 @@ Raster extraction from raster and polygon
 
 ```{r}
 future::plan(future::multicore(workers = availableCores(constraints = "multicore")))
-res <- NbClust(df_climate_vars[,1:4], 
+res <- NbClust(df_climate_vars %>%
+                 st_drop_geometry() %>%
+                 select(pet,aet, tmmx, tmmn) %>% 
+                 tibble::remove_rownames(), 
                diss = NULL, distance = 'euclidean', min.nc = 2, max.nc = 5, 
                method = "kmeans", index = 'all')
 
-number_optimal <- fviz_nbclust(res, method = "silhouette", print.summary = TRUE) +
-  theme_minimal()
 
 ```
 
 ```{r}
 set.seed(123)
-km.res <- kmeans(df_climate_vars[,1:4], 6, nstart = 25)
+km.res <- kmeans(df_climate_vars %>%
+                 st_drop_geometry() %>%
+                 select(pet,aet, tmmx, tmmn) %>% 
+                 tibble::remove_rownames(), centers = 6, nstart = 25)
 
-climate_clusters_ks <- cbind(df_climate_vars, as.factor(km.res$cluster))
-colnames(kmeans_3Z) <- c('X','Y','cluster')
+df_climate_vars %<>% 
+  mutate(zone = as.factor(km.res$cluster))
+
 
 ```
 
 
 ```{r}
 ggplot() + 
-  geom
+  geom_sf(aes(fill=zone), data = df_climate_vars)
 ```
 
 
