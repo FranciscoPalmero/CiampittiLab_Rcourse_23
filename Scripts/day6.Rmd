@@ -6,9 +6,8 @@
 #install.packages("factoextra")
 ```
 
-
 ```{r message=FALSE, warning=FALSE}
-library(albersusa)
+
 library(tidyverse)
 library(sf)
 library(NbClust)
@@ -16,48 +15,32 @@ library(factoextra)
 library(magrittr)
 ```
 
+### Reading ESRI Shapefiles (Polygonal Vectorial data)
 
 ```{r}
 counties_sf <- read_sf('../Data/spatial_data/counties_sf.shp')
-```
 
-```{r}
 usa_states <- read_sf('../Data/spatial_data/usa_sf.shp')
-
 ```
-
 
 # ----------------------------------------------
 
-
-# 1) Spatial data types
-
-## 1.1) Vectorial data
+### Vectorial data with country, states and counties boundaries
 
 ```{r}
-counties_usa <- counties_sf()
+counties_usa <- counties_sf
 counties_usa %>% 
   data.frame()
 ```
-
 
 ```{r}
 ggplot() +
   geom_sf(data = usa_states)
 ```
 
-## 1.2) Raster data
-
-```{r}
-
-```
-
 # ----------------------------------------------
 
-# 2) 
-
-Example 1:
-
+## Example 1: Mesonet stations visualization
 
 ```{r}
 kansas_counties <-  counties_usa %>% 
@@ -69,7 +52,6 @@ ggplot() +
   geom_sf(data = kansas_counties)
 ```
 
-
 ```{r}
 ggplot() +
     geom_sf(data = usa_states) +
@@ -80,7 +62,7 @@ ggplot() +
              xlim = c(-104, -93), ylim = c(36, 41.5))
 ```
 
--   Load the mesonet weather stations locations files
+### Load the mesonet weather stations locations files
 
 ```{r}
 mesonet_sites <- read.csv('../data/spatial_data/KSMeso-Station-Metadata.csv',skip = 2)
@@ -95,7 +77,7 @@ mesonet_sites <- mesonet_sites %>%
 plot(mesonet_sites)
 ```
 
--   Use ggplot2 to plot and visualize the information. Add the name of axis X and Y, Title and subtitle
+### Use ggplot2 to plot and visualize the information. Add the name of axis X and Y, Title and subtitle
 
 ```{r}
 ggplot() +
@@ -113,9 +95,7 @@ ggplot() +
 
 # ----------------------------------------------
 
-
-Example 2: 
-
+## Example 2: Relationship among pivot irrigation fields, streams and groundwater resources.
 
 ```{r}
 streams <- read_sf('../Data/spatial_data/kansas_streams_order3_9_webmerc.shp') %>%
@@ -137,7 +117,6 @@ ggplot() +
              xlim = c(-110, -90), ylim = c(30, 45)) 
 ```
 
-
 ```{r}
 ggplot() + 
   geom_sf(data = kansas_counties) +
@@ -153,7 +132,6 @@ field_irrigated <- read_csv('../Data/spatial_data/field_irrigated_ks.csv') %>%
   st_set_crs(st_crs("epsg:4326"))
 ```
 
-
 ```{r}
 
 boundary_kansas <- usa_states %>% 
@@ -162,9 +140,10 @@ boundary_kansas <- usa_states %>%
 ggplot() + 
   geom_sf(data = boundary_kansas) +
   geom_sf(data = streams,color='blue') + 
-  geom_sf(data = irrigation, color='black', size=0.1)
+  geom_sf(data = field_irrigated, color='black', size=0.1)
 ```
 
+### Clipping high_plain_groundwater layer with Kansas polygon (boundary_kansas)
 
 ```{r}
 
@@ -181,22 +160,23 @@ ggplot() +
   geom_sf(data = boundary_kansas) + 
   geom_sf(data = high_plain_groundwater_ks)
 
-
-#st_difference(high_plain_groundwater,boundary_kansas)
 ```
+
+### Visualizing all layers at the same time.
+
 ```{r}
 ggplot() + 
   geom_sf(data = boundary_kansas) +
   #geom_sf(data = streams,color='blue') + 
   geom_sf(data = high_plain_groundwater_ks,fill=NA,color='orange',size=3,alpha=0.7) + 
-  geom_sf(data = irrigation, color='black', size=0.1,alpha=0.4)
+  geom_sf(data = field_irrigated, color='black', size=0.1,alpha=0.4)
+
+
 ```
 
 # ----------------------------------------------
 
-Example 3: 
-
-Grid creation 
+## Example 3: Grid creation
 
 ```{r create grid}
 
@@ -205,7 +185,7 @@ boundary_kansas_proj <- boundary_kansas %>%
   st_transform(crs=3744) 
 
 grid <- st_make_grid(boundary_kansas_proj,
-                     cellsize = 10000,
+                     cellsize = 15000,
                      what = "polygons") 
 
 ggplot() + 
@@ -213,20 +193,24 @@ ggplot() +
   geom_sf(data = grid)
 ```
 
+### Grid clipping
+
 ```{r}
 grid <- boundary_kansas_proj %>% 
   st_intersection(grid) %>%
   st_set_crs(st_crs("epsg:3744")) %>%
   st_transform(crs=4326) 
+```
 
+### Grid visualization
 
+```{r}
 ggplot() + 
   geom_sf(data = boundary_kansas) + 
   geom_sf(data = grid)  
 ```
 
-
-read terraclimate rasters
+### Reading terraclimate rasters
 
 ```{r}
 precipitation <- raster::raster('../Data/spatial_data/pet.tif')
@@ -242,9 +226,7 @@ df_climate_vars <- raster::stack(precipitation,eto,temp_max,temp_min) %>%
 
 ```
 
-
-Raster extraction from raster and polygon
-
+### Raster extraction from raster and polygon
 
 ```{r}
 future::plan(future::multicore(workers = availableCores(constraints = "multicore")))
@@ -258,12 +240,14 @@ res <- NbClust(df_climate_vars %>%
 
 ```
 
+### Environmental zone delineation with Clustering analysis using Kmeans
+
 ```{r}
 set.seed(123)
 km.res <- kmeans(df_climate_vars %>%
                  st_drop_geometry() %>%
                  select(pet,aet, tmmx, tmmn) %>% 
-                 tibble::remove_rownames(), centers = 6, nstart = 25)
+                 tibble::remove_rownames(), centers = 2, nstart = 25)
 
 df_climate_vars %<>% 
   mutate(zone = as.factor(km.res$cluster))
@@ -271,20 +255,15 @@ df_climate_vars %<>%
 
 ```
 
+### Environmental Zone visualization
 
 ```{r}
 ggplot() + 
   geom_sf(aes(fill=zone), data = df_climate_vars)
 ```
 
+## Resources
 
+-   <https://www.sciencebase.gov/catalog/item/6314061bd34e36012efa397b>
 
-Resources
-
-https://www.sciencebase.gov/catalog/item/6314061bd34e36012efa397b
-
-
-
-
-
-
+-   
