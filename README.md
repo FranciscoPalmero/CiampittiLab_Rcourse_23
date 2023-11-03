@@ -1,5 +1,5 @@
 # R Course - Fall 2023 Edition
-Francisco Palmero and Josefine Lacasa welcome Ciampitti Lab members to the R Course Fall 2023 edition.
+Francisco Palmero and Josefina Lacasa welcome Ciampitti Lab members to the R Course Fall 2023 edition.
 
 # A Little of History about This Course
 This course was created in 2021 by $\textbf{Josefina Lacasa}$ as a setting to learn basic concepts of R programming and applied statistics. The idea behind this course was to provide Ciampitti Lab members with elemental skills in programming and applied statistics to help them succeed in industry or grad schools.
