@@ -1,0 +1,60 @@
+---
+title: "GLM"
+author: "J Lacasa"
+date: "2023-11-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Library
+```{r}
+library(tidyverse)
+library(lme4)
+library(emmeans)
+```
+
+## Data 
+
+```{r}
+df <- read.csv("../../../../../../../Downloads/rend.csv")
+df$Trat <- factor(df$Trat, levels = c("Control", "S", "N", "NS"))
+df <- droplevels(subset(df, Trat %in% c("Control", "S", "N", "NS")))
+df$Exp <- factor(df$Exp)
+df$Bloque <- factor(df$Bloque)
+df$Anio <- factor(df$Anio)
+df$Tipo_Exp <- factor(df$Tipo_Exp)
+df <- df %>% filter(Tipo_Exp == "FC")
+```
+
+```{r}
+str(df)
+```
+
+```{r}
+df %>% 
+  ggplot(aes(Bio_final_kg_ha))+
+  facet_wrap(~Anio, ncol=1)+
+  geom_histogram(aes(fill = Anio))
+```
+
+## Analysis
+
+```{r}
+m1 <- lmer(Bio_final_kg_ha ~ Trat + (1|Exp/Bloque), data = df)
+m1
+car::Anova(m1)
+```
+
+
+```{r}
+emmeans(m1, ~ Trat)
+```
+
+```{r}
+df %>% 
+  mutate(N_trt = ifelse())
+```
+

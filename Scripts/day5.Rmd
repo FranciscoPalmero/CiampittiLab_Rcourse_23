@@ -1,0 +1,44 @@
+---
+title: "Untitled"
+author: "J Lacasa"
+date: "2023-10-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+Libraries 
+
+```{r}
+library(tidyverse)
+library(lme4)
+```
+
+Data 
+
+```{r}
+df <- read.csv("../Data/tillage.csv")
+```
+
+```{r}
+names(df)
+df$Yield.of.NT
+
+```
+
+```{r}
+m1 <- lm(Yield.of.NT ~ Crop + Author, data = df)
+```
+
+```{r}
+n_distinct(df$Author)
+```
+
+```{r}
+m1_mixed <- lmer(Yield.of.NT ~ Crop + (1|Author), data = df) 
+
+summary(m1_mixed)
+```
+
