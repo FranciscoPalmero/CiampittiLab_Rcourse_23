@@ -1,65 +1,3 @@
-<<<<<<< HEAD
----
-title: "GLM"
-author: "J Lacasa"
-date: "2023-11-03"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Library
-```{r}
-library(tidyverse)
-library(lme4)
-library(emmeans)
-```
-
-## Data 
-
-```{r}
-df <- read.csv("../../../../../../../Downloads/rend.csv")
-df$Trat <- factor(df$Trat, levels = c("Control", "S", "N", "NS"))
-df <- droplevels(subset(df, Trat %in% c("Control", "S", "N", "NS")))
-df$Exp <- factor(df$Exp)
-df$Bloque <- factor(df$Bloque)
-df$Anio <- factor(df$Anio)
-df$Tipo_Exp <- factor(df$Tipo_Exp)
-df <- df %>% filter(Tipo_Exp == "FC")
-```
-
-```{r}
-str(df)
-```
-
-```{r}
-df %>% 
-  ggplot(aes(Bio_final_kg_ha))+
-  facet_wrap(~Anio, ncol=1)+
-  geom_histogram(aes(fill = Anio))
-```
-
-## Analysis
-
-```{r}
-m1 <- lmer(Bio_final_kg_ha ~ Trat + (1|Exp/Bloque), data = df)
-m1
-car::Anova(m1)
-```
-
-
-```{r}
-emmeans(m1, ~ Trat)
-```
-
-```{r}
-df %>% 
-  mutate(N_trt = ifelse())
-```
-
-=======
 # Packages
 
 ```{r}
@@ -247,7 +185,7 @@ boundary_kansas_proj <- boundary_kansas %>%
   st_transform(crs=3744) 
 
 grid <- st_make_grid(boundary_kansas_proj,
-                     cellsize = 15000,
+                     cellsize = 25000,
                      what = "polygons") 
 
 ggplot() + 
@@ -296,7 +234,7 @@ res <- NbClust(df_climate_vars %>%
                  st_drop_geometry() %>%
                  select(pet,aet, tmmx, tmmn) %>% 
                  tibble::remove_rownames(), 
-               diss = NULL, distance = 'euclidean', min.nc = 2, max.nc = 5, 
+               diss = NULL, distance = 'euclidean', min.nc = 6, max.nc = 85, 
                method = "kmeans", index = 'all')
 
 
@@ -309,7 +247,7 @@ set.seed(123)
 km.res <- kmeans(df_climate_vars %>%
                  st_drop_geometry() %>%
                  select(pet,aet, tmmx, tmmn) %>% 
-                 tibble::remove_rownames(), centers = 2, nstart = 25)
+                 tibble::remove_rownames(), centers = 6, nstart = 25)
 
 df_climate_vars %<>% 
   mutate(zone = as.factor(km.res$cluster))
@@ -329,4 +267,3 @@ ggplot() +
 -   <https://www.sciencebase.gov/catalog/item/6314061bd34e36012efa397b>
 
 -   
->>>>>>> db93cce674b9ccaffbb8e33b52f7486ffa3a9ddb
